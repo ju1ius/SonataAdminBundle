@@ -154,12 +154,11 @@ var Admin = {
                 }
 
                 var html = jQuery(response.content);
-                Admin.setup_xeditable(html);
+                var $editable = jQuery(this);
+                var $parent = $editable.parent();
 
-                jQuery(this)
-                    .closest('td')
-                    .replaceWith(html)
-                ;
+                $editable.replaceWith(html);
+                Admin.setup_xeditable($parent);
             }
         });
     },

@@ -15,6 +15,8 @@ file that was distributed with this source code.
     {% elseif field_description.getOption('ajax_hidden') == true and app.request.isXmlHttpRequest %}
         {# Disable fields with 'ajax_hidden' option set to true #}
     {% else %}
-        {{ object|render_list_element(field_description) }}
+        <td class="sonata-ba-list-field sonata-ba-list-field-{{ field_description.type }}" objectId="{{ admin.id(object) }}">
+            {{ object|render_list_element(field_description) }}
+        </td>
     {% endif %}
 {% endfor %}

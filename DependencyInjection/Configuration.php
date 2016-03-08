@@ -298,6 +298,10 @@ class Configuration implements ConfigurationInterface
                                 'bundles/sonataadmin/css/styles.css',
                                 'bundles/sonataadmin/css/layout.css',
                                 'bundles/sonataadmin/css/tree.css',
+
+                                'bundles/sonataadmin/css/components/spinner.css',
+                                'bundles/sonataadmin/css/components/modal.css',
+                                'bundles/sonataadmin/css/components/forms.css',
                             ))
                             ->prototype('scalar')->end()
                         ->end()
@@ -328,8 +332,30 @@ class Configuration implements ConfigurationInterface
                                 'bundles/sonataadmin/vendor/waypoints/lib/jquery.waypoints.min.js',
                                 'bundles/sonataadmin/vendor/waypoints/lib/shortcuts/sticky.min.js',
 
-                                'bundles/sonataadmin/Admin.js',
-                                'bundles/sonataadmin/treeview.js',
+                                'bundles/sonataadmin/js/shims.js',
+                                'bundles/sonataadmin/js/Sonata.js',
+                                'bundles/sonataadmin/js/Admin.js',
+                                'bundles/sonataadmin/js/ui/treeview.js',
+                                'bundles/sonataadmin/js/ui/spinner.js',
+                                'bundles/sonataadmin/js/ui/alert.js',
+
+                                // Plugins
+                                'bundles/sonataadmin/js/plugins/confirmExit.js',
+                                'bundles/sonataadmin/js/plugins/select2.js',
+                                'bundles/sonataadmin/js/plugins/icheck.js',
+                                'bundles/sonataadmin/js/plugins/xeditable.js',
+                                'bundles/sonataadmin/js/plugins/treeview.js',
+                                // Components
+                                'bundles/sonataadmin/js/pager/filters.js',
+                                'bundles/sonataadmin/js/pager/per-page-selector.js',
+                                'bundles/sonataadmin/js/pager/batch-selection.js',
+                                'bundles/sonataadmin/js/form/errors.js',
+                                'bundles/sonataadmin/js/form/autocomplete.js',
+                                'bundles/sonataadmin/js/form/revisions.js',
+                                'bundles/sonataadmin/js/form/edit-associations.js',
+                                'bundles/sonataadmin/js/form/sortable-associations.js',
+                                'bundles/sonataadmin/js/form/collection-type.js',
+                                'bundles/sonataadmin/js/form/choice-mask-type.js',
                             ))
                             ->prototype('scalar')->end()
                         ->end()

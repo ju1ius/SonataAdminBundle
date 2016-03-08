@@ -13,10 +13,12 @@ namespace Sonata\AdminBundle\Twig\Extension;
 
 use Doctrine\Common\Util\ClassUtils;
 use Psr\Log\LoggerInterface;
+use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Admin\FieldDescriptionInterface;
 use Sonata\AdminBundle\Admin\Pool;
 use Sonata\AdminBundle\Exception\NoValueException;
+use Symfony\Bridge\Twig\AppVariable;
 
 /**
  * Class SonataAdminExtension.
@@ -46,8 +48,8 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
      */
     public function __construct(Pool $pool, LoggerInterface $logger = null)
     {
-        $this->pool      = $pool;
-        $this->logger    = $logger;
+        $this->pool = $pool;
+        $this->logger = $logger;
     }
 
     /**
@@ -70,6 +72,23 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
             new \Twig_SimpleFilter('render_relation_element', array($this, 'renderRelationElement')),
             new \Twig_SimpleFilter('sonata_urlsafeid', array($this, 'getUrlsafeIdentifier')),
             new \Twig_SimpleFilter('sonata_xeditable_type', array($this, 'getXEditableType')),
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFunctions()
+    {
+        return array(
+            new \Twig_SimpleFunction('sonata_field_description_json', array($this, 'renderFieldDescriptionToJSON'), array(
+                'needs_context' => true,
+                'is_safe'       => array('html'),
+            )),
+            new \Twig_SimpleFunction('sonata_autocomplete_options', array($this, 'renderAutocompleteOptions'), array(
+                'needs_context' => true,
+                'is_safe'       => array('html'),
+            )),
         );
     }
 
@@ -326,22 +345,162 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
     public function getXEditableType($type)
     {
         $mapping = array(
-            'boolean'    => 'select',
-            'text'       => 'text',
-            'textarea'   => 'textarea',
-            'html'       => 'textarea',
-            'email'      => 'email',
-            'string'     => 'text',
-            'smallint'   => 'text',
-            'bigint'     => 'text',
-            'integer'    => 'number',
-            'decimal'    => 'number',
-            'currency'   => 'number',
-            'percent'    => 'number',
-            'url'        => 'url',
-            'date'       => 'date',
+            'boolean'  => 'select',
+            'text'     => 'text',
+            'textarea' => 'textarea',
+            'html'     => 'textarea',
+            'email'    => 'email',
+            'string'   => 'text',
+            'smallint' => 'text',
+            'bigint'   => 'text',
+            'integer'  => 'number',
+            'decimal'  => 'number',
+            'currency' => 'number',
+            'percent'  => 'number',
+            'url'      => 'url',
+            'date'     => 'date',
         );
 
         return isset($mapping[$type]) ? $mapping[$type] : false;
+    }
+
+    /**
+     * Encodes the information needed by Javascript about a form widget to JSON,
+     * to be used in the association handling client-side code.
+     *
+     * @param array $context The current Twig context.
+     *
+     * @return string
+     */
+    public function renderFieldDescriptionToJSON($context)
+    {
+        /** @var AppVariable $app */
+        $app = $context['app'];
+        $request = $app->getRequest();
+        $sonataAdmin = $context['sonata_admin'];
+        /** @var Admin $admin */
+        $admin = $sonataAdmin['admin'];
+        /** @var FieldDescriptionInterface $fieldDescription */
+        $fieldDescription = $sonataAdmin['field_description'];
+        $root = $admin->getRoot();
+        $associationAdmin = $fieldDescription->getAssociationAdmin();
+        $router = $admin->getRouteGenerator();
+
+        $data = array(
+            'id'               => $context['id'],
+            'admin'            => $root->getCode(),
+            'associationAdmin' => $associationAdmin->getCode(),
+            'formType'         => $fieldDescription->getType(),
+            'editMode'         => $sonataAdmin['edit'],
+            'label'            => $associationAdmin->trans($associationAdmin->getLabel(), array(), $associationAdmin->getTranslationDomain()),
+            'routes'           => array(
+                'shortObjectDescription' => $router->generate('sonata_admin_short_object_information', array(
+                    'objectId'       => '__OBJECT_ID__',
+                    'uniqid'         => $associationAdmin->getUniqid(),
+                    'code'           => $associationAdmin->getCode(),
+                    'linkParameters' => $fieldDescription->getOption('link_parameters'),
+                )),
+                'retrieveFormElement' => $router->generate('sonata_admin_retrieve_form_element', array(
+                    'code'      => $root->getCode(),
+                    'elementId' => $context['id'],
+                    'objectId'  => $root->id($root->getSubject()),
+                    'uniqid'    => $root->getUniqid(),
+                    'subclass'  => $admin->getActiveSubclassCode(),
+                )),
+                'appendFormElement' => $router->generate(
+                    'sonata_admin_append_form_element',
+                    array_merge(array(
+                        'code'      => $root->getCode(),
+                        'elementId' => $context['id'],
+                        'objectId'  => $root->id($root->getSubject()),
+                        'uniqid'    => $root->getUniqid(),
+                        'subclass'  => $request->query->get('subclass'),
+                    ), $fieldDescription->getOption('link_parameters', array()))
+                ),
+            ),
+        );
+
+        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    }
+
+    public function renderAutocompleteOptions($context)
+    {
+        /** @var AppVariable $app */
+        $app = $context['app'];
+        $request = $app->getRequest();
+        $sonataAdmin = $context['sonata_admin'];
+        /** @var Admin $admin */
+        $admin = $sonataAdmin['admin'];
+        $router = $admin->getRouteGenerator();
+
+        // set the widget's initial value
+        $values = array();
+        $labels = isset($context['value']['_labels']) ? $context['value']['_labels'] : array();
+        unset($context['value']['_labels']);
+
+        foreach ($context['value'] as $i => $id) {
+            $values[] = array(
+                'id'    => $id,
+                'label' => $labels[$i],
+            );
+        }
+        // convert string values to booleans
+        $multiple = $context['multiple'] ? true : false;
+        $required = $context['required'] ? true : false;
+
+        $allowClearPlaceholder = (!$multiple && !$required) ? ' ' : '';
+
+        $data = array(
+            'id'      => $context['id'],
+            'name'    => $context['full_name'],
+            'value'   => $multiple ? $values : (!empty($values) ? $values[0] : null),
+            'select2' => array(
+                // allowClear needs placeholder to work properly
+                'placeholder'        => $context['placeholder'] ?: $allowClearPlaceholder,
+                'allowClear'         => $required ? false : true,
+                'enable'             => $context['disabled'] ? false : true,
+                'readonly'           => $context['read_only'],
+                'minimumInputLength' => $context['minimum_input_length'],
+                'multiple'           => $multiple,
+                'width'              => $context['width'],
+                'dropdownAutoWidth'  => $context['dropdown_auto_width'],
+                'containerCssClass'  => $context['container_css_class'].' form-control',
+                'dropdownCssClass'   => $context['dropdown_css_class'],
+                'ajax'               => array(
+                    'url'         => $context['url'] ?: $router->generate($context['route']['name'], $context['route']['parameters']),
+                    'quietMillis' => $context['quiet_millis'],
+                    'cache'       => $context['cache'],
+                ),
+            ),
+            'dropdownItemCssClass' => $context['dropdown_item_css_class'],
+        );
+
+        $data['requestParameterNames'] = array(
+            'query'      => $context['req_param_name_search'],
+            'pageNumber' => $context['req_param_name_page_number'],
+        );
+
+        $data['requestData'] = $context['req_params'];
+        $data['requestData'][$context['req_param_name_items_per_page']] = $context['items_per_page'];
+        if ($sonataAdmin['admin']) {
+            $admin = $sonataAdmin['admin'];
+            $data['requestData']['uniqid'] = $admin->getUniqid();
+            $data['requestData']['admin_code'] = $admin->getCode();
+        } elseif ($context['admin_code']) {
+            $data['requestData']['admin_code'] = $context['admin_code'];
+        }
+
+        if ($subclass = $request->query->get('subclass')) {
+            $data['requestData']['subclass'] = $subclass;
+        }
+
+        if ($context['context'] === 'filter') {
+            $data['requestData']['field'] = str_replace(array('filter[', '][value]', '__'), array('', '', '.'), $context['full_name']);
+            $data['requestData']['_context'] = 'filter';
+        } else {
+            $data['requestData']['field'] = $context['name'];
+        }
+
+        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

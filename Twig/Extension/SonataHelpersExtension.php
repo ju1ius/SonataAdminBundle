@@ -30,7 +30,11 @@ class SonataHelpersExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('classlist', array($this, 'renderClassList'), array('is_safe' => array('html_attr'))),
+            new \Twig_SimpleFunction(
+                'classlist',
+                array($this, 'renderClassList'),
+                array('is_safe' => array('html_attr'))
+            ),
         );
     }
 

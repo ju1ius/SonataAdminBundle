@@ -35,18 +35,23 @@ file that was distributed with this source code.
                         {% for revision in revisions %}
                             <tr class="{{ classlist({
                                 'sonata-ba-revisions__revision': true,
-                                'sonata-ba-revisions__revision--is-current': currentRevision != false and revision.rev == currentRevision.rev
+                                'sonata-ba-revisions__revision--is-current': (
+                                    currentRevision != false
+                                    and revision.rev == currentRevision.rev
+                                )
                             }) }}">
                                 <td>{{ revision.rev }}</td>
                                 <td>{% include admin.getTemplate('history_revision_timestamp') %}</td>
                                 <td>
-                                    {{- revision.username|default('label_unknown_user'|trans({}, 'SonataAdminBundle')) -}}
+                                    {{- revision.username|default(
+                                        'label_unknown_user'|trans({}, 'SonataAdminBundle')
+                                    ) -}}
                                 </td>
                                 <td>
                                     <a href="{{ admin.generateObjectUrl(
                                         'history_view_revision',
                                         object,
-                                        {'revision': revision.rev }
+                                        {revision: revision.rev}
                                     ) }}" rel="{{ revision.rev }}" data-action="view-revision">
                                         {{- "label_view_revision"|trans({}, 'SonataAdminBundle') -}}
                                     </a>
@@ -58,7 +63,10 @@ file that was distributed with this source code.
                                         <a href="{{ admin.generateObjectUrl(
                                             'history_compare_revisions',
                                             object,
-                                            {'base_revision': currentRevision.rev, 'compare_revision': revision.rev }
+                                            {
+                                                base_revision: currentRevision.rev,
+                                                compare_revision: revision.rev
+                                            }
                                         ) }}" rel="{{ revision.rev }}" data-action="compare-revision">
                                             {{- 'label_compare_revision'|trans({}, 'SonataAdminBundle') -}}
                                         </a>

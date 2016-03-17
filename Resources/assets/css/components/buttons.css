@@ -1,0 +1,26 @@
+/* Buttons */
+
+.btn.btn-outline {
+    color: inherit;
+    background-color: transparent;
+    transition: all .5s;
+}
+
+.btn.btn-primary.btn-outline:hover,
+.btn.btn-success.btn-outline:hover,
+.btn.btn-info.btn-outline:hover,
+.btn.btn-warning.btn-outline:hover,
+.btn.btn-danger.btn-outline:hover {
+    color: #fff;
+}
+
+.sonata-action-element.btn-group {
+    display: inline-block;
+    padding: 4px 10px 4px;
+    vertical-align: middle;
+}
+
+.sonata-ba-action.btn:not(:hover) {
+    background: none;
+    color: inherit;
+}

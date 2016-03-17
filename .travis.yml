@@ -14,6 +14,7 @@ env:
   global:
     - PATH="$HOME/.composer/vendor/bin:$PATH"
     - SYMFONY_DEPRECATIONS_HELPER=weak
+    - TRAVIS_NODE_VERSION="5.4"
 
 matrix:
   fast_finish: true
@@ -41,6 +42,10 @@ matrix:
 
   allow_failures:
     - php: hhvm
+
+install:
+  - rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install $TRAVIS_NODE_VERSION
+  - npm install
 
 before_script:
   - (phpenv config-rm xdebug.ini || exit 0)

@@ -248,7 +248,10 @@ class SonataAdminExtensionTest extends HTMLTestCase
                 }
             }));
 
-        $this->assertHTMLequals($expected, $this->twigExtension->renderListElement($this->object, $this->fieldDescription));
+        $this->assertHTMLequals(
+            $expected,
+            $this->twigExtension->renderListElement($this->object, $this->fieldDescription)
+        );
     }
 
     public function getRenderListElementTests()
@@ -264,7 +267,7 @@ class SonataAdminExtensionTest extends HTMLTestCase
             array('<td class="sonata-ba-list-field sonata-ba-list-field-textarea" objectId="12345"> </td>', 'textarea', null, array()),
             array('<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> December 24, 2013 10:11 </td>', 'datetime', new \DateTime('2013-12-24 10:11:12', new \DateTimeZone('Europe/London')), array()),
             array('<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> December 24, 2013 18:11 </td>', 'datetime', new \DateTime('2013-12-24 10:11:12', new \DateTimeZone('UTC')), array('timezone' => 'Asia/Hong_Kong')),
-            // #10
+            // 10
             array('<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> &nbsp; </td>', 'datetime', null, array()),
             array('<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> 24.12.2013 10:11:12 </td>', 'datetime', new \DateTime('2013-12-24 10:11:12', new \DateTimeZone('Europe/London')), array('format' => 'd.m.Y H:i:s')),
             array('<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> &nbsp; </td>', 'datetime', null, array('format' => 'd.m.Y H:i:s')),
@@ -293,44 +296,44 @@ class SonataAdminExtensionTest extends HTMLTestCase
             array('<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345"> <span class="label label-success">yes</span> </td>', 'boolean', true, array('editable' => false)),
             array('<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345"> <span class="label label-danger">no</span> </td>', 'boolean', false, array('editable' => false)),
             array('<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345"> <span class="label label-danger">no</span> </td>', 'boolean', null, array('editable' => false)),
-            array(
-                implode(' ', array(
-                    '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">',
-                        '<span class="x-editable" data-type="select" data-value="1" data-title="Data" data-pk="12345"',
-                            'data-url="/core/set-object-field-value?context=list&amp;field=fd_name&amp;objectId=12345&amp;code=xyz"',
-                            'data-source=\'[{"value":0,"text":"no"},{"value":1,"text":"yes"}]\'>',
-                            '<span class="label label-success">yes</span>',
-                        '</span>',
-                    '</td>',
-                )),
+            array(<<<EOS
+                <td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                    <span class="x-editable" data-type="select" data-value="1" data-title="Data" data-pk="12345"
+                        data-url="/core/set-object-field-value?context=list&amp;field=fd_name&amp;objectId=12345&amp;code=xyz"
+                        data-source='[{"value":0,"text":"no"},{"value":1,"text":"yes"}]'>
+                        <span class="label label-success">yes</span>
+                    </span>
+                </td>
+EOS
+                ,
                 'boolean',
                 true,
                 array('editable' => true),
             ),
-            array(
-                implode(' ', array(
-                    '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">',
-                        '<span class="x-editable" data-type="select" data-value="" data-title="Data" data-pk="12345"',
-                            'data-url="/core/set-object-field-value?context=list&amp;field=fd_name&amp;objectId=12345&amp;code=xyz"',
-                            'data-source=\'[{"value":0,"text":"no"},{"value":1,"text":"yes"}]\'>',
-                            '<span class="label label-danger">no</span>',
-                        '</span>',
-                    '</td>',
-                )),
+            array(<<<EOS
+                <td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                    <span class="x-editable" data-type="select" data-value="" data-title="Data" data-pk="12345"
+                        data-url="/core/set-object-field-value?context=list&amp;field=fd_name&amp;objectId=12345&amp;code=xyz"
+                        data-source='[{"value":0,"text":"no"},{"value":1,"text":"yes"}]'>
+                        <span class="label label-danger">no</span>
+                    </span>
+                </td>
+EOS
+                ,
                 'boolean',
                 false,
                 array('editable' => true),
             ),
-            array(
-                implode(' ', array(
-                    '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">',
-                        '<span class="x-editable" data-type="select" data-value="" data-title="Data" data-pk="12345"',
-                            'data-url="/core/set-object-field-value?context=list&amp;field=fd_name&amp;objectId=12345&amp;code=xyz"',
-                            'data-source=\'[{"value":0,"text":"no"},{"value":1,"text":"yes"}]\'>',
-                            '<span class="label label-danger">no</span>',
-                        '</span>',
-                    '</td>',
-                )),
+            array(<<<EOS
+                <td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                    <span class="x-editable" data-type="select" data-value="" data-title="Data" data-pk="12345"
+                        data-url="/core/set-object-field-value?context=list&amp;field=fd_name&amp;objectId=12345&amp;code=xyz"
+                        data-source='[{"value":0,"text":"no"},{"value":1,"text":"yes"}]'>
+                        <span class="label label-danger">no</span>
+                    </span>
+                </td>
+EOS
+                ,
                 'boolean',
                 null,
                 array('editable' => true),
@@ -534,7 +537,10 @@ class SonataAdminExtensionTest extends HTMLTestCase
                 }
             }));
 
-        $this->assertHTMLEquals($expected, $this->twigExtension->renderViewElement($this->fieldDescription, $this->object));
+        $this->assertHTMLEquals(
+            $expected,
+            $this->twigExtension->renderViewElement($this->fieldDescription, $this->object)
+        );
     }
 
     public function getRenderViewElementTests()

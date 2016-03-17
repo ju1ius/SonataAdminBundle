@@ -81,14 +81,22 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('sonata_field_description_json', array($this, 'renderFieldDescriptionToJSON'), array(
-                'needs_context' => true,
-                'is_safe'       => array('html'),
-            )),
-            new \Twig_SimpleFunction('sonata_autocomplete_options', array($this, 'renderAutocompleteOptions'), array(
-                'needs_context' => true,
-                'is_safe'       => array('html'),
-            )),
+            new \Twig_SimpleFunction(
+                'sonata_field_description_json',
+                array($this, 'renderFieldDescriptionToJSON'),
+                array(
+                    'needs_context' => true,
+                    'is_safe'       => array('html'),
+                )
+            ),
+            new \Twig_SimpleFunction(
+                'sonata_autocomplete_config_json',
+                array($this, 'renderAutocompleteConfiguration'),
+                array(
+                    'needs_context' => true,
+                    'is_safe'       => array('html'),
+                )
+            ),
         );
     }
 
@@ -386,13 +394,17 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
         $associationAdmin = $fieldDescription->getAssociationAdmin();
         $router = $admin->getRouteGenerator();
 
-        $data = array(
+        $config = array(
             'id'               => $context['id'],
             'admin'            => $root->getCode(),
             'associationAdmin' => $associationAdmin->getCode(),
             'formType'         => $fieldDescription->getType(),
             'editMode'         => $sonataAdmin['edit'],
-            'label'            => $associationAdmin->trans($associationAdmin->getLabel(), array(), $associationAdmin->getTranslationDomain()),
+            'label'            => $associationAdmin->trans(
+                $associationAdmin->getLabel(),
+                array(),
+                $associationAdmin->getTranslationDomain()
+            ),
             'routes'           => array(
                 'shortObjectDescription' => $router->generate('sonata_admin_short_object_information', array(
                     'objectId'       => '__OBJECT_ID__',
@@ -420,10 +432,10 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
             ),
         );
 
-        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json_encode($config, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
-    public function renderAutocompleteOptions($context)
+    public function renderAutocompleteConfiguration($context)
     {
         /** @var AppVariable $app */
         $app = $context['app'];
@@ -448,9 +460,9 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
         $multiple = $context['multiple'] ? true : false;
         $required = $context['required'] ? true : false;
 
-        $allowClearPlaceholder = (!$multiple && !$required) ? ' ' : '';
+        $allowClearPlaceholder = ($multiple || $required) ? '' : ' ';
 
-        $data = array(
+        $config = array(
             'id'      => $context['id'],
             'name'    => $context['full_name'],
             'value'   => $multiple ? $values : (!empty($values) ? $values[0] : null),
@@ -467,7 +479,10 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
                 'containerCssClass'  => $context['container_css_class'].' form-control',
                 'dropdownCssClass'   => $context['dropdown_css_class'],
                 'ajax'               => array(
-                    'url'         => $context['url'] ?: $router->generate($context['route']['name'], $context['route']['parameters']),
+                    'url'         => $context['url'] ?: $router->generate(
+                        $context['route']['name'],
+                        $context['route']['parameters']
+                    ),
                     'quietMillis' => $context['quiet_millis'],
                     'cache'       => $context['cache'],
                 ),
@@ -475,32 +490,36 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
             'dropdownItemCssClass' => $context['dropdown_item_css_class'],
         );
 
-        $data['requestParameterNames'] = array(
+        $config['requestParameterNames'] = array(
             'query'      => $context['req_param_name_search'],
             'pageNumber' => $context['req_param_name_page_number'],
         );
 
-        $data['requestData'] = $context['req_params'];
-        $data['requestData'][$context['req_param_name_items_per_page']] = $context['items_per_page'];
+        $config['requestData'] = $context['req_params'];
+        $config['requestData'][$context['req_param_name_items_per_page']] = $context['items_per_page'];
         if ($sonataAdmin['admin']) {
             $admin = $sonataAdmin['admin'];
-            $data['requestData']['uniqid'] = $admin->getUniqid();
-            $data['requestData']['admin_code'] = $admin->getCode();
+            $config['requestData']['uniqid'] = $admin->getUniqid();
+            $config['requestData']['admin_code'] = $admin->getCode();
         } elseif ($context['admin_code']) {
-            $data['requestData']['admin_code'] = $context['admin_code'];
+            $config['requestData']['admin_code'] = $context['admin_code'];
         }
 
         if ($subclass = $request->query->get('subclass')) {
-            $data['requestData']['subclass'] = $subclass;
+            $config['requestData']['subclass'] = $subclass;
         }
 
         if ($context['context'] === 'filter') {
-            $data['requestData']['field'] = str_replace(array('filter[', '][value]', '__'), array('', '', '.'), $context['full_name']);
-            $data['requestData']['_context'] = 'filter';
+            $config['requestData']['field'] = str_replace(
+                array('filter[', '][value]', '__'),
+                array('', '', '.'),
+                $context['full_name']
+            );
+            $config['requestData']['_context'] = 'filter';
         } else {
-            $data['requestData']['field'] = $context['name'];
+            $config['requestData']['field'] = $context['name'];
         }
 
-        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        return json_encode($config, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

@@ -1,0 +1,21 @@
+
+div.sonata-filters-box div.form-group div.form-group {
+    margin: 0;
+}
+
+div.sonata-filters-box div.form-group span.input-group-addon {
+    padding: 3px 10px;
+    font-size: 13px;
+}
+
+/* side filter */
+
+.box .box-header h4.box-title.filter_legend {
+    position: relative;
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+form.sonata-filter-form.form-stacked {
+    padding-left: 0;
+}

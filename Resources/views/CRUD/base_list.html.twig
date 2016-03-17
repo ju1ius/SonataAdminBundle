@@ -15,13 +15,22 @@ file that was distributed with this source code.
     {% include 'SonataAdminBundle:CRUD:action_buttons.html.twig' %}
 {% endblock %}
 
-{% block tab_menu %}{{ knp_menu_render(admin.sidemenu(action), {'currentClass' : 'active', 'template': sonata_admin.adminPool.getTemplate('tab_menu_template')}, 'twig') }}{% endblock %}
+{% block tab_menu %}
+    {{ knp_menu_render(
+        admin.sidemenu(action),
+        {
+            currentClass: 'active',
+            template: sonata_admin.adminPool.getTemplate('tab_menu_template')
+        },
+        'twig'
+    ) }}
+{% endblock %}
 
 {% block list_table %}
     <div class="col-xs-12 col-md-12">
         {% set batchactions = admin.batchactions %}
         {% if admin.hasRoute('batch') and batchactions|length %}
-            <form action="{{ admin.generateUrl('batch', {'filter': admin.filterParameters}) }}" method="POST" >
+            <form action="{{ admin.generateUrl('batch', {'filter': admin.filterParameters}) }}" method="POST">
             <input type="hidden" name="_sonata_csrf_token" value="{{ csrf_token }}">
         {% endif %}
 
@@ -196,8 +205,6 @@ file that was distributed with this source code.
                                data-target="#filter-{{ admin.uniqid }}-{{ filter.name }}"
                                aria-controls="filter-{{ admin.uniqid }}-{{ filter.name }}"
                                aria-expanded="{{ (filter.active or filter.options['show_filter']) ? 'true' : 'false' }}"
-                               {#data-filter-target="filter-{{ admin.uniqid }}-{{ filter.name }}"#}
-                               {#data-filter-container="filter-container-{{ admin.uniqid() }}"#}
                             >
                                 <i class="{{ classlist('fa', {
                                     'fa-check-square-o': filter.active or filter.options['show_filter'],
@@ -295,7 +302,8 @@ file that was distributed with this source code.
 
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary">
-                                        <i class="fa fa-filter"></i> {{ 'btn_filter'|trans({}, 'SonataAdminBundle') }}
+                                        <i class="fa fa-filter"></i>
+                                        {{ 'btn_filter'|trans({}, 'SonataAdminBundle') }}
                                     </button>
 
                                     <a class="btn btn-default" href="{{ admin.generateUrl('list', {filters: 'reset'}) }}">

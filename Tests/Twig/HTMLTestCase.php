@@ -49,11 +49,11 @@ class HTMLTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function assertHTMLElementEquals(\DOMElement $expected, \DOMElement $actual, $message = '')
     {
-        if (!empty($message)) {
+        if ($message) {
             $message .= "\n";
         }
         $this->assertSame($expected->tagName, $actual->tagName, sprintf(
-            '%sTag name doesn\'t match',
+            "%sTag name doesn't match",
             $message
         ));
         $this->assertSame($expected->attributes->length, $actual->attributes->length, sprintf(
@@ -102,7 +102,7 @@ class HTMLTestCase extends \PHPUnit_Framework_TestCase
                 $this->assertHTMLElementEquals($expectedChild, $actualChild);
             } elseif ($expectedChild instanceof \DOMText) {
                 $this->assertSame(trim($expectedChild->nodeValue), trim($actualChild->nodeValue), sprintf(
-                    '%sText node value doesn\'t match in element <%s>.',
+                    "%sText node value doesn't match in element <%s>.",
                     $message,
                     $expected->tagName
                 ));
@@ -142,7 +142,7 @@ class HTMLTestCase extends \PHPUnit_Framework_TestCase
             $child = $node->childNodes->item($i);
             if ($child instanceof \DOMText) {
                 $text = trim($child->nodeValue);
-                if (empty($text)) {
+                if (!$text) {
                     $node->removeChild($child);
                 }
             } elseif ($child instanceof \DOMCharacterData) {

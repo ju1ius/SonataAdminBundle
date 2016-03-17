@@ -1,0 +1,21 @@
+
+fieldset legend {
+    padding-left: 0;
+}
+
+input[type="file"] {
+    height: 34px;
+}
+
+.required:after {
+    content: '*';
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 10px;
+}
+
+.input-group-addon {
+    /* See https://github.com/sonata-project/SonataAdminBundle/issues/2950 */
+    width: auto;
+}

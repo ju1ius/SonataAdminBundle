@@ -13,7 +13,7 @@ file that was distributed with this source code.
         {%- if read_only %} readonly="readonly"{% endif -%}
         {%- if disabled %} disabled="disabled"{% endif -%}
         {%- if required %} required="required"{% endif %}
-        data-autocomplete-options="{{ sonata_autocomplete_options()|e('html_attr') }}"
+        data-autocomplete-config="{{ sonata_autocomplete_config_json()|e('html_attr') }}"
     />
     <div id="{{ id }}_hidden_inputs_wrap">
         {% if multiple -%}

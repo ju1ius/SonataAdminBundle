@@ -1,0 +1,43 @@
+
+/*
+ * Components
+ * ---------------------------------------------------------------------------------------------------------------- */
+@import './components/buttons.css';
+@import './components/form.css';
+@import './components/navbar.css';
+@import './components/filters.css';
+@import './components/breadcrumb.css';
+@import './components/tree.css';
+
+@import './components/crud/list/base.css';
+@import './components/crud/list/table.css';
+@import './components/crud/list/mosaic.css';
+@import './components/crud/edit.css';
+@import './components/crud/show.css';
+
+
+/*
+ * Layout
+ * ---------------------------------------------------------------------------------------------------------------- */
+@import './layout/base.css';
+@import './layout/logo.css';
+@import './layout/menu.css';
+@import './layout/sidebar.css';
+@import './layout/footer.css';
+
+
+/*
+ * bundle-specific
+ * (selectors found in only one bundle)
+ * ---------------------------------------------------------------------------------------------------------------- */
+@import './bundles/user.css';
+
+
+/*
+ * legacy (code that might be dead)
+ * ---------------------------------------------------------------------------------------------------------------- */
+
+/* This file was never included */
+/*@import './colors.css';*/
+
+@import './legacy.css';

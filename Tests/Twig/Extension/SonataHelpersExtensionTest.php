@@ -68,23 +68,16 @@ class SonataHelpersExtensionTest extends \PHPUnit_Framework_TestCase
         $iterable = new \ArrayObject(array('foo' => true, 'bar' => true, 'baz' => false));
 
         return array(
-            // classlist('foo') is a shortcut to classlist({foo: true})
-            array(array('foo', 'bar'), 'foo bar'),
-            array(array(array('foo' => true, 'bar' => true)), 'foo bar'),
-            // ignores falsy values
-            array(array(null, false, 0, array(), '', array(null, false, 0, '')), ''),
-            // ignores non-string keys / values
-            array(array(42, 666, array(true, false)), ''),
-            // keep truthy
-            array(array('yep', array('jawoll')), 'yep jawoll'),
-            // works with iterable & stringifyable objects
-            array(array($stringLike, $iterable), 'string-like foo bar'),
-            // recursive, baby
-            array(array(array('foo' => array('bar' => array('baz')))), 'baz'),
-            array(array(array('foo', array('bar', array('baz')))), 'foo bar baz'),
-            array(array(array('foo', array('bar' => array('baz', 'qux')))), 'foo baz qux'),
-            // later values override previous
-            array(array('foo', 'bar', array('bar' => false)), 'foo'),
+            'accepts scalar arguments'               => array(array('foo', 'bar'), 'foo bar'),
+            'accepts array arguments'                => array(array(array('foo' => true, 'bar' => true)), 'foo bar'),
+            'ignores falsy values'                   => array(array(null, false, 0, array(), '', array(null, false, 0, '')), ''),
+            'ignores non-string keys/values'         => array(array(42, 666, array(true, false)), ''),
+            'keeps truthy vales'                     => array(array('yep', array('jawoll')), 'yep jawoll'),
+            'accepts iterable & string-like objects' => array(array($stringLike, $iterable), 'string-like foo bar'),
+            'flattens arrays 1'                      => array(array(array('foo' => array('bar' => array('baz')))), 'baz'),
+            'flattens arrays 2'                      => array(array(array('foo', array('bar', array('baz')))), 'foo bar baz'),
+            'flattens arrays 3'                      => array(array(array('foo', array('bar' => array('baz', 'qux')))), 'foo baz qux'),
+            'later values override previous'         => array(array('foo', 'bar', array('bar' => false)), 'foo'),
         );
     }
 }

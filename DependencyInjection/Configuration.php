@@ -295,13 +295,7 @@ class Configuration implements ConfigurationInterface
 
                                 'bundles/sonataadmin/vendor/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css',
 
-                                'bundles/sonataadmin/css/styles.css',
-                                'bundles/sonataadmin/css/layout.css',
-                                'bundles/sonataadmin/css/tree.css',
-
-                                'bundles/sonataadmin/css/components/spinner.css',
-                                'bundles/sonataadmin/css/components/modal.css',
-                                'bundles/sonataadmin/css/components/forms.css',
+                                'bundles/sonataadmin/main.css',
                             ))
                             ->prototype('scalar')->end()
                         ->end()
@@ -309,21 +303,13 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue(array(
                                 'bundles/sonatacore/vendor/jquery/dist/jquery.min.js',
                                 'bundles/sonataadmin/vendor/jquery.scrollTo/jquery.scrollTo.min.js',
-
                                 'bundles/sonatacore/vendor/moment/min/moment.min.js',
-
                                 'bundles/sonataadmin/vendor/jqueryui/ui/minified/jquery-ui.min.js',
                                 'bundles/sonataadmin/vendor/jqueryui/ui/minified/i18n/jquery-ui-i18n.min.js',
-
                                 'bundles/sonatacore/vendor/bootstrap/dist/js/bootstrap.min.js',
-
                                 'bundles/sonatacore/vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-
                                 'bundles/sonataadmin/vendor/jquery-form/jquery.form.js',
-                                'bundles/sonataadmin/jquery/jquery.confirmExit.js',
-
                                 'bundles/sonataadmin/vendor/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
-
                                 'bundles/sonatacore/vendor/select2/select2.min.js',
 
                                 'bundles/sonataadmin/vendor/admin-lte/dist/js/app.min.js',
@@ -332,30 +318,7 @@ class Configuration implements ConfigurationInterface
                                 'bundles/sonataadmin/vendor/waypoints/lib/jquery.waypoints.min.js',
                                 'bundles/sonataadmin/vendor/waypoints/lib/shortcuts/sticky.min.js',
 
-                                'bundles/sonataadmin/js/shims.js',
-                                'bundles/sonataadmin/js/Sonata.js',
-                                'bundles/sonataadmin/js/Admin.js',
-                                'bundles/sonataadmin/js/ui/treeview.js',
-                                'bundles/sonataadmin/js/ui/spinner.js',
-                                'bundles/sonataadmin/js/ui/alert.js',
-
-                                // Plugins
-                                'bundles/sonataadmin/js/plugins/confirmExit.js',
-                                'bundles/sonataadmin/js/plugins/select2.js',
-                                'bundles/sonataadmin/js/plugins/icheck.js',
-                                'bundles/sonataadmin/js/plugins/xeditable.js',
-                                'bundles/sonataadmin/js/plugins/treeview.js',
-                                // Components
-                                'bundles/sonataadmin/js/pager/filters.js',
-                                'bundles/sonataadmin/js/pager/per-page-selector.js',
-                                'bundles/sonataadmin/js/pager/batch-selection.js',
-                                'bundles/sonataadmin/js/form/errors.js',
-                                'bundles/sonataadmin/js/form/autocomplete.js',
-                                'bundles/sonataadmin/js/form/revisions.js',
-                                'bundles/sonataadmin/js/form/edit-associations.js',
-                                'bundles/sonataadmin/js/form/sortable-associations.js',
-                                'bundles/sonataadmin/js/form/collection-type.js',
-                                'bundles/sonataadmin/js/form/choice-mask-type.js',
+                                'bundles/sonataadmin/main.js',
                             ))
                             ->prototype('scalar')->end()
                         ->end()

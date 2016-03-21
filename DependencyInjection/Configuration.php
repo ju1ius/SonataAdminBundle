@@ -295,9 +295,7 @@ class Configuration implements ConfigurationInterface
 
                                 'bundles/sonataadmin/vendor/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css',
 
-                                'bundles/sonataadmin/css/styles.css',
-                                'bundles/sonataadmin/css/layout.css',
-                                'bundles/sonataadmin/css/tree.css',
+                                'bundles/sonataadmin/main.css',
                             ))
                             ->prototype('scalar')->end()
                         ->end()
@@ -305,21 +303,13 @@ class Configuration implements ConfigurationInterface
                             ->defaultValue(array(
                                 'bundles/sonatacore/vendor/jquery/dist/jquery.min.js',
                                 'bundles/sonataadmin/vendor/jquery.scrollTo/jquery.scrollTo.min.js',
-
                                 'bundles/sonatacore/vendor/moment/min/moment.min.js',
-
                                 'bundles/sonataadmin/vendor/jqueryui/ui/minified/jquery-ui.min.js',
                                 'bundles/sonataadmin/vendor/jqueryui/ui/minified/i18n/jquery-ui-i18n.min.js',
-
                                 'bundles/sonatacore/vendor/bootstrap/dist/js/bootstrap.min.js',
-
                                 'bundles/sonatacore/vendor/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
-
                                 'bundles/sonataadmin/vendor/jquery-form/jquery.form.js',
-                                'bundles/sonataadmin/jquery/jquery.confirmExit.js',
-
                                 'bundles/sonataadmin/vendor/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js',
-
                                 'bundles/sonatacore/vendor/select2/select2.min.js',
 
                                 'bundles/sonataadmin/vendor/admin-lte/dist/js/app.min.js',
@@ -328,8 +318,7 @@ class Configuration implements ConfigurationInterface
                                 'bundles/sonataadmin/vendor/waypoints/lib/jquery.waypoints.min.js',
                                 'bundles/sonataadmin/vendor/waypoints/lib/shortcuts/sticky.min.js',
 
-                                'bundles/sonataadmin/Admin.js',
-                                'bundles/sonataadmin/treeview.js',
+                                'bundles/sonataadmin/main.js',
                             ))
                             ->prototype('scalar')->end()
                         ->end()

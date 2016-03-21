@@ -1,0 +1,68 @@
+/*
+ * Not used anymore ?
+ */
+div.sonata-ba-modal-edit-one-to-one td.sonata-ba-list-field-batch,
+div.sonata-ba-modal-edit-one-to-one div.sonata-ba-list-actions,
+div.sonata-ba-modal-edit-one-to-one th.sonata-ba-list-field-header-batch {
+    display: none;
+}
+
+div.sonata-ba-modal-edit-one-to-one div.sonata-ba-list-actions {
+    display: none;
+}
+
+
+legend.sonata-ba-fieldset-collapsed-description + .sonata-ba-collapsed-fields {
+    margin-top: 0;
+}
+
+.sonata-ba-fieldset-collapsed legend:before {
+    content: '+ ';
+}
+
+/*
+ * The .filter_legend class isn't used anywhere
+ */
+h4.filter_legend:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 4px solid black;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    position: absolute;
+    top: 50%;
+    left: 2px;
+    margin-top: -2px;
+    margin-left: 5px;
+}
+h4.filter_legend table {
+    margin: 10px 0;
+}
+
+h4.filter_legend.active,
+tr.filter.active * {
+    font-weight: bold;
+    color: #000;
+}
+
+/*
+ * This class is never used on a td element.
+ */
+td.pager ul {
+    float: left;
+    list-style: none;
+    margin: 2px auto;
+}
+
+td.pager ul li {
+    float: left;
+}
+
+td.pager ul li a {
+    border: 1px solid #cccccc;
+    line-height: 25px;
+    padding: 1px 8px;
+    margin: 2px;
+}

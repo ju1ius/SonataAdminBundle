@@ -356,12 +356,47 @@ function showCreateDialog (url, action) {
     ;
 }
 
+/**
+ * Shows the dialog to display an existing association.
+ *
+ * @param {FieldActionType} action
+ */
+function showShowDialog (action) {
+    const {fieldDescription} = action;
+    const $input = getField(fieldDescription.id);
+    const value = ($input.val() || '').trim();
+    if (!value) {
+        // Association is not set or was deleted, just
+        return;
+    }
+    const url = fieldDescription.routes.show.replace('__OBJECT_ID__', value);
+    showActionDialog(action)
+        .then(() => $.ajax(url, {dataType: 'html'}))
+        .done(html => {
+            populateActionDialog(action, html);
+            // This is the show action, do we want people to do anything else ?
+            action.dialog.body
+                .on('click', 'a', e => e.preventDefault())
+                .on('submit', 'form', e => e.preventDefault());
+        })
+        .fail(handleActionRequestError(action))
+    ;
+}
+
 //
 // Bootstrap listeners
 // ---------------------------------------------------------------------------------------------------------------
 
 
 $(document)
+    // Show button
+    .on('click.sonata-admin', '.sonata-ba-action[data-field-action="show-association"]', event => {
+        event.preventDefault();
+        const $link = $(event.currentTarget);
+        const fieldDescription = getFieldDescription($link);
+        const dialog = createActionDialog(fieldDescription);
+        showShowDialog(createFieldAction(fieldDescription, dialog));
+    })
     // List button
     .on('click.sonata-admin', '.sonata-ba-action[data-field-action="list-association"]', event => {
         event.preventDefault();

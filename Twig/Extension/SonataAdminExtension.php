@@ -406,6 +406,7 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
                 $associationAdmin->getTranslationDomain()
             ),
             'routes'           => array(
+                'show'                   => $associationAdmin->generateUrl('show', array('id' => '__OBJECT_ID__')),
                 'shortObjectDescription' => $router->generate('sonata_admin_short_object_information', array(
                     'objectId'       => '__OBJECT_ID__',
                     'uniqid'         => $associationAdmin->getUniqid(),

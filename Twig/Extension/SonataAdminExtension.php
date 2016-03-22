@@ -442,8 +442,8 @@ class SonataAdminExtension extends \Twig_Extension implements \Twig_Extension_In
         $request = $app->getRequest();
         $sonataAdmin = $context['sonata_admin'];
         /** @var Admin $admin */
-        $admin = $sonataAdmin['admin'];
-        $router = $admin->getRouteGenerator();
+        $admin = $sonataAdmin['admin']; // admin is null in filter context
+        $router = $this->pool->getContainer()->get('router');
 
         // set the widget's initial value
         $values = array();

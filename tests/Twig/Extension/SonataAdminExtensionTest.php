@@ -18,7 +18,9 @@ use Sonata\AdminBundle\Admin\FieldDescriptionInterface;
 use Sonata\AdminBundle\Admin\Pool;
 use Sonata\AdminBundle\Exception\NoValueException;
 use Sonata\AdminBundle\Tests\Fixtures\Entity\FooToString;
+use Sonata\AdminBundle\Tests\Twig\HTMLTestCase;
 use Sonata\AdminBundle\Twig\Extension\SonataAdminExtension;
+use Sonata\AdminBundle\Twig\Extension\SonataHelpersExtension;
 use Symfony\Bridge\Twig\Extension\RoutingExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubFilesystemLoader;
@@ -37,7 +39,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  *
  * @author Andrej Hudec <pulzarraider@gmail.com>
  */
-class SonataAdminExtensionTest extends TestCase
+class SonataAdminExtensionTest extends HTMLTestCase
 {
     /**
      * @var SonataAdminExtension
@@ -159,8 +161,10 @@ class SonataAdminExtensionTest extends TestCase
         $routeCollection->addCollection($testRouteCollection);
         $requestContext = new RequestContext();
         $urlGenerator = new UrlGenerator($routeCollection, $requestContext);
+
         $this->environment->addExtension(new RoutingExtension($urlGenerator));
         $this->environment->addExtension(new \Twig_Extensions_Extension_Text());
+        $this->environment->addExtension(new SonataHelpersExtension());
 
         // initialize object
         $this->object = new \stdClass();
@@ -303,14 +307,11 @@ class SonataAdminExtensionTest extends TestCase
                 }
             }));
 
-        $this->assertSame(
-            $this->removeExtraWhitespace($expected),
-            $this->removeExtraWhitespace($this->twigExtension->renderListElement(
-                $this->environment,
-                $this->object,
-                $this->fieldDescription
-            ))
-        );
+        $this->assertHTMLequals($expected, $this->twigExtension->renderListElement(
+            $this->environment,
+            $this->object,
+            $this->fieldDescription
+        ));
     }
 
     /**
@@ -364,12 +365,12 @@ class SonataAdminExtensionTest extends TestCase
     {
         return [
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-nonexistent" objectId="12345"> Example </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-nonexistent" data-object-id="12345"> Example </td>',
                 'Example',
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-nonexistent" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-nonexistent" data-object-id="12345"> </td>',
                 null,
                 [],
             ],
@@ -380,43 +381,43 @@ class SonataAdminExtensionTest extends TestCase
     {
         return [
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-string" objectId="12345"> Example </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-string" data-object-id="12345"> Example </td>',
                 'string',
                 'Example',
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-string" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-string" data-object-id="12345"> </td>',
                 'string',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-text" objectId="12345"> Example </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-text" data-object-id="12345"> Example </td>',
                 'text',
                 'Example',
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-text" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-text" data-object-id="12345"> </td>',
                 'text',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-textarea" objectId="12345"> Example </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-textarea" data-object-id="12345"> Example </td>',
                 'textarea',
                 'Example',
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-textarea" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-textarea" data-object-id="12345"> </td>',
                 'textarea',
                 null,
                 [],
             ],
             'datetime field' => [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345">
                     December 24, 2013 10:11
                 </td>',
                 'datetime',
@@ -424,7 +425,7 @@ class SonataAdminExtensionTest extends TestCase
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345">
                     December 24, 2013 18:11
                 </td>',
                 'datetime',
@@ -432,13 +433,13 @@ class SonataAdminExtensionTest extends TestCase
                 ['timezone' => 'Asia/Hong_Kong'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345"> &nbsp; </td>',
                 'datetime',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345">
                     24.12.2013 10:11:12
                 </td>',
                 'datetime',
@@ -446,13 +447,13 @@ class SonataAdminExtensionTest extends TestCase
                 ['format' => 'd.m.Y H:i:s'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345"> &nbsp; </td>',
                 'datetime',
                 null,
                 ['format' => 'd.m.Y H:i:s'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345">
                     24.12.2013 18:11:12
                 </td>',
                 'datetime',
@@ -460,172 +461,175 @@ class SonataAdminExtensionTest extends TestCase
                 ['format' => 'd.m.Y H:i:s', 'timezone' => 'Asia/Hong_Kong'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-datetime" data-object-id="12345"> &nbsp; </td>',
                 'datetime',
                 null,
                 ['format' => 'd.m.Y H:i:s', 'timezone' => 'Asia/Hong_Kong'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-date" objectId="12345"> December 24, 2013 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-date" data-object-id="12345"> December 24, 2013 </td>',
                 'date',
                 new \DateTime('2013-12-24 10:11:12', new \DateTimeZone('Europe/London')),
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-date" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-date" data-object-id="12345"> &nbsp; </td>',
                 'date',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-date" objectId="12345"> 24.12.2013 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-date" data-object-id="12345"> 24.12.2013 </td>',
                 'date',
                 new \DateTime('2013-12-24 10:11:12', new \DateTimeZone('Europe/London')),
                 ['format' => 'd.m.Y'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-date" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-date" data-object-id="12345"> &nbsp; </td>',
                 'date',
                 null,
                 ['format' => 'd.m.Y'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-time" objectId="12345"> 10:11:12 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-time" data-object-id="12345"> 10:11:12 </td>',
                 'time',
                 new \DateTime('2013-12-24 10:11:12', new \DateTimeZone('Europe/London')),
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-time" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-time" data-object-id="12345"> &nbsp; </td>',
                 'time',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-number" objectId="12345"> 10.746135 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-number" data-object-id="12345"> 10.746135 </td>',
                 'number', 10.746135,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-number" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-number" data-object-id="12345"> </td>',
                 'number',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-integer" objectId="12345"> 5678 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-integer" data-object-id="12345"> 5678 </td>',
                 'integer',
                 5678,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-integer" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-integer" data-object-id="12345"> </td>',
                 'integer',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-percent" objectId="12345"> 1074.6135 % </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-percent" data-object-id="12345"> 1074.6135 % </td>',
                 'percent',
                 10.746135,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-percent" objectId="12345"> 0 % </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-percent" data-object-id="12345"> 0 % </td>',
                 'percent',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" objectId="12345"> EUR 10.746135 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" data-object-id="12345"> EUR 10.746135 </td>',
                 'currency',
                 10.746135,
                 ['currency' => 'EUR'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" data-object-id="12345"> </td>',
                 'currency',
                 null,
                 ['currency' => 'EUR'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" objectId="12345"> GBP 51.23456 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" data-object-id="12345"> GBP 51.23456 </td>',
                 'currency',
                 51.23456,
                 ['currency' => 'GBP'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-currency" data-object-id="12345"> </td>',
                 'currency',
                 null,
                 ['currency' => 'GBP'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> &nbsp; </td>',
                 'email',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345"> <a href="mailto:admin@admin.com">admin@admin.com</a> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> <a href="mailto:admin@admin.com">admin@admin.com</a> </td>',
                 'email',
                 'admin@admin.com',
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> 
                     <a href="mailto:admin@admin.com">admin@admin.com</a> </td>',
                 'email',
                 'admin@admin.com',
                 ['as_string' => false],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345"> admin@admin.com </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> admin@admin.com </td>',
                 'email',
                 'admin@admin.com',
                 ['as_string' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345">
-                    <a href="mailto:admin@admin.com?'.$this->buildTwigLikeUrl(['subject' => 'Main Theme', 'body' => 'Message Body']).'">admin@admin.com</a>  </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345">  
+                    <a href="mailto:admin@admin.com?'.$this->buildTwigLikeUrl(['subject' => 'Main Theme', 'body' => 'Message Body']).'">admin@admin.com</a>
+                </td>',
                 'email',
                 'admin@admin.com',
                 ['subject' => 'Main Theme', 'body' => 'Message Body'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345">
-                    <a href="mailto:admin@admin.com?'.$this->buildTwigLikeUrl(['subject' => 'Main Theme']).'">admin@admin.com</a>  </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345">  
+                    <a href="mailto:admin@admin.com?'.$this->buildTwigLikeUrl(['subject' => 'Main Theme']).'">admin@admin.com</a>
+                </td>',
                 'email',
                 'admin@admin.com',
                 ['subject' => 'Main Theme'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345">
-                    <a href="mailto:admin@admin.com?'.$this->buildTwigLikeUrl(['body' => 'Message Body']).'">admin@admin.com</a>  </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345">  
+                    <a href="mailto:admin@admin.com?'.$this->buildTwigLikeUrl(['body' => 'Message Body']).'">admin@admin.com</a>
+                </td>',
                 'email',
                 'admin@admin.com',
                 ['body' => 'Message Body'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345"> admin@admin.com </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> admin@admin.com </td>',
                 'email',
                 'admin@admin.com',
                 ['as_string' => true, 'subject' => 'Main Theme', 'body' => 'Message Body'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345"> admin@admin.com </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> admin@admin.com </td>',
                 'email',
                 'admin@admin.com',
                 ['as_string' => true, 'body' => 'Message Body'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-email" objectId="12345"> admin@admin.com </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-email" data-object-id="12345"> admin@admin.com </td>',
                 'email',
                 'admin@admin.com',
                 ['as_string' => true, 'subject' => 'Main Theme'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-array" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-array" data-object-id="12345">
                     [1 => First] [2 => Second]
                 </td>',
                 'array',
@@ -633,13 +637,13 @@ class SonataAdminExtensionTest extends TestCase
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-array" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-array" data-object-id="12345"> </td>',
                 'array',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" data-object-id="12345">
                     <span class="label label-success">yes</span>
                 </td>',
                 'boolean',
@@ -647,7 +651,7 @@ class SonataAdminExtensionTest extends TestCase
                 ['editable' => false],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" data-object-id="12345">
                     <span class="label label-danger">no</span>
                 </td>',
                 'boolean',
@@ -655,7 +659,7 @@ class SonataAdminExtensionTest extends TestCase
                 ['editable' => false],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-boolean" data-object-id="12345">
                     <span class="label label-danger">no</span>
                 </td>',
                 'boolean',
@@ -663,8 +667,8 @@ class SonataAdminExtensionTest extends TestCase
                 ['editable' => false],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-boolean" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -684,8 +688,8 @@ EOT
                 ['editable' => true],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-boolean" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -704,8 +708,8 @@ EOT
                 ['editable' => true],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-boolean" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-boolean" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -723,25 +727,25 @@ EOT
                 ['editable' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" objectId="12345"> Delete </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" data-object-id="12345"> Delete </td>',
                 'trans',
                 'action_delete',
                 ['catalogue' => 'SonataAdminBundle'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" data-object-id="12345"> </td>',
                 'trans',
                 null,
                 ['catalogue' => 'SonataAdminBundle'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" objectId="12345"> Delete </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" data-object-id="12345"> Delete </td>',
                 'trans',
                 'action_delete',
                 ['format' => '%s', 'catalogue' => 'SonataAdminBundle'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" data-object-id="12345">
                 action.action_delete
                 </td>',
                 'trans',
@@ -749,7 +753,7 @@ EOT
                 ['format' => 'action.%s'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-trans" data-object-id="12345">
                 action.action_delete
                 </td>',
                 'trans',
@@ -757,31 +761,31 @@ EOT
                 ['format' => 'action.%s', 'catalogue' => 'SonataAdminBundle'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Status1 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Status1 </td>',
                 'choice',
                 'Status1',
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Status1 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Status1 </td>',
                 'choice',
                 ['Status1'],
                 ['choices' => [], 'multiple' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Alias1 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Alias1 </td>',
                 'choice',
                 'Status1',
                 ['choices' => ['Status1' => 'Alias1', 'Status2' => 'Alias2', 'Status3' => 'Alias3']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> </td>',
                 'choice',
                 null,
                 ['choices' => ['Status1' => 'Alias1', 'Status2' => 'Alias2', 'Status3' => 'Alias3']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
                 NoValidKeyInChoices
                 </td>',
                 'choice',
@@ -789,7 +793,7 @@ EOT
                 ['choices' => ['Status1' => 'Alias1', 'Status2' => 'Alias2', 'Status3' => 'Alias3']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Delete </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Delete </td>',
                 'choice',
                 'Foo',
                 ['catalogue' => 'SonataAdminBundle', 'choices' => [
@@ -799,25 +803,25 @@ EOT
                 ]],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Alias1, Alias3 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Alias1, Alias3 </td>',
                 'choice',
                 ['Status1', 'Status3'],
                 ['choices' => [
                     'Status1' => 'Alias1',
                     'Status2' => 'Alias2',
                     'Status3' => 'Alias3',
-                ], 'multiple' => true], ],
+                ], 'multiple' => true],],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Alias1 | Alias3 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Alias1 | Alias3 </td>',
                 'choice',
                 ['Status1', 'Status3'],
                 ['choices' => [
                     'Status1' => 'Alias1',
                     'Status2' => 'Alias2',
                     'Status3' => 'Alias3',
-                ], 'multiple' => true, 'delimiter' => ' | '], ],
+                ], 'multiple' => true, 'delimiter' => ' | '],],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> </td>',
                 'choice',
                 null,
                 ['choices' => [
@@ -827,7 +831,7 @@ EOT
                 ], 'multiple' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
                 NoValidKeyInChoices
                 </td>',
                 'choice',
@@ -839,7 +843,7 @@ EOT
                 ], 'multiple' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
                 NoValidKeyInChoices, Alias2
                 </td>',
                 'choice',
@@ -851,7 +855,7 @@ EOT
                 ], 'multiple' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345"> Delete, Alias3 </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345"> Delete, Alias3 </td>',
                 'choice',
                 ['Foo', 'Status3'],
                 ['catalogue' => 'SonataAdminBundle', 'choices' => [
@@ -861,7 +865,7 @@ EOT
                 ], 'multiple' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
                 &lt;b&gt;Alias1&lt;/b&gt;, &lt;b&gt;Alias3&lt;/b&gt;
             </td>',
                 'choice',
@@ -870,10 +874,10 @@ EOT
                     'Status1' => '<b>Alias1</b>',
                     'Status2' => '<b>Alias2</b>',
                     'Status3' => '<b>Alias3</b>',
-                ], 'multiple' => true], ],
+                ], 'multiple' => true],],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -893,8 +897,8 @@ EOT
                 ['editable' => true],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -919,8 +923,8 @@ EOT
                 ],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -946,8 +950,8 @@ EOT
                 ],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -972,8 +976,8 @@ EOT
                 ],
             ],
             [
-                <<<'EOT'
-<td class="sonata-ba-list-field sonata-ba-list-field-choice" objectId="12345">
+                <<<EOT
+<td class="sonata-ba-list-field sonata-ba-list-field-choice" data-object-id="12345">
     <span
         class="x-editable"
         data-type="select"
@@ -1000,25 +1004,25 @@ EOT
                 ],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345"> &nbsp; </td>',
                 'url',
                 null,
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345"> &nbsp; </td>',
                 'url',
                 null,
                 ['url' => 'http://example.com'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345"> &nbsp; </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345"> &nbsp; </td>',
                 'url',
                 null,
                 ['route' => ['name' => 'sonata_admin_foo']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://example.com">http://example.com</a>
                 </td>',
                 'url',
@@ -1026,7 +1030,7 @@ EOT
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="https://example.com">https://example.com</a>
                 </td>',
                 'url',
@@ -1034,7 +1038,7 @@ EOT
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="https://example.com" target="_blank">https://example.com</a>
                 </td>',
                 'url',
@@ -1042,7 +1046,7 @@ EOT
                 ['attributes' => ['target' => '_blank']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="https://example.com" target="_blank" class="fooLink">https://example.com</a>
                 </td>',
                 'url',
@@ -1050,15 +1054,15 @@ EOT
                 ['attributes' => ['target' => '_blank', 'class' => 'fooLink']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
-                <a href="http://example.com">example.com</a>
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
+                <a href="https://example.com">example.com</a>
                 </td>',
                 'url',
                 'http://example.com',
                 ['hide_protocol' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="https://example.com">example.com</a>
                 </td>',
                 'url',
@@ -1066,7 +1070,7 @@ EOT
                 ['hide_protocol' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://example.com">http://example.com</a>
                 </td>',
                 'url',
@@ -1074,7 +1078,7 @@ EOT
                 ['hide_protocol' => false],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="https://example.com">https://example.com</a>
                 </td>',
                 'url',
@@ -1082,7 +1086,7 @@ EOT
                 ['hide_protocol' => false],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://example.com">Foo</a>
                 </td>',
                 'url',
@@ -1090,7 +1094,7 @@ EOT
                 ['url' => 'http://example.com'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://example.com">&lt;b&gt;Foo&lt;/b&gt;</a>
                 </td>',
                 'url',
@@ -1098,7 +1102,7 @@ EOT
                 ['url' => 'http://example.com'],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="/foo">Foo</a>
                 </td>',
                 'url',
@@ -1106,7 +1110,7 @@ EOT
                 ['route' => ['name' => 'sonata_admin_foo']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://localhost/foo">Foo</a>
                 </td>',
                 'url',
@@ -1114,16 +1118,16 @@ EOT
                 ['route' => ['name' => 'sonata_admin_foo', 'absolute' => true]],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="/foo">foo/bar?a=b&amp;c=123456789</a>
                 </td>',
                 'url',
                 'http://foo/bar?a=b&c=123456789',
                 ['route' => ['name' => 'sonata_admin_foo'],
-                'hide_protocol' => true, ],
+                'hide_protocol' => true,],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://localhost/foo">foo/bar?a=b&amp;c=123456789</a>
                 </td>',
                 'url',
@@ -1134,18 +1138,18 @@ EOT
                 ],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="/foo/abcd/efgh?param3=ijkl">Foo</a>
                 </td>',
                 'url',
                 'Foo',
                 [
                     'route' => ['name' => 'sonata_admin_foo_param',
-                    'parameters' => ['param1' => 'abcd', 'param2' => 'efgh', 'param3' => 'ijkl'], ],
+                    'parameters' => ['param1' => 'abcd', 'param2' => 'efgh', 'param3' => 'ijkl'],],
                 ],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://localhost/foo/abcd/efgh?param3=ijkl">Foo</a>
                 </td>',
                 'url',
@@ -1153,11 +1157,11 @@ EOT
                 [
                     'route' => ['name' => 'sonata_admin_foo_param',
                     'absolute' => true,
-                    'parameters' => ['param1' => 'abcd', 'param2' => 'efgh', 'param3' => 'ijkl'], ],
+                    'parameters' => ['param1' => 'abcd', 'param2' => 'efgh', 'param3' => 'ijkl'],],
                 ],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="/foo/obj/abcd/12345/efgh?param3=ijkl">Foo</a>
                 </td>',
                 'url',
@@ -1165,11 +1169,11 @@ EOT
                 [
                     'route' => ['name' => 'sonata_admin_foo_object',
                     'parameters' => ['param1' => 'abcd', 'param2' => 'efgh', 'param3' => 'ijkl'],
-                    'identifier_parameter_name' => 'barId', ],
+                    'identifier_parameter_name' => 'barId',],
                 ],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-url" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-url" data-object-id="12345">
                 <a href="http://localhost/foo/obj/abcd/12345/efgh?param3=ijkl">Foo</a>
                 </td>',
                 'url',
@@ -1178,11 +1182,11 @@ EOT
                     'route' => ['name' => 'sonata_admin_foo_object',
                     'absolute' => true,
                     'parameters' => ['param1' => 'abcd', 'param2' => 'efgh', 'param3' => 'ijkl'],
-                    'identifier_parameter_name' => 'barId', ],
+                    'identifier_parameter_name' => 'barId',],
                 ],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345">
                 <p><strong>Creating a Template for the Field</strong> and form</p>
                 </td>',
                 'html',
@@ -1190,7 +1194,7 @@ EOT
                 [],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345">
                 Creating a Template for the Field and form
                 </td>',
                 'html',
@@ -1198,7 +1202,7 @@ EOT
                 ['strip' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345">
                 Creating a Template for the Fi...
                 </td>',
                 'html',
@@ -1206,13 +1210,13 @@ EOT
                 ['truncate' => true],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345"> Creating a... </td>',
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345"> Creating a... </td>',
                 'html',
                 '<p><strong>Creating a Template for the Field</strong> and form</p>',
                 ['truncate' => ['length' => 10]],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345">
                 Creating a Template for the Field...
                 </td>',
                 'html',
@@ -1220,7 +1224,7 @@ EOT
                 ['truncate' => ['preserve' => true]],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345">
                 Creating a Template for the Fi etc.
                 </td>',
                 'html',
@@ -1228,7 +1232,7 @@ EOT
                 ['truncate' => ['separator' => ' etc.']],
             ],
             [
-                '<td class="sonata-ba-list-field sonata-ba-list-field-html" objectId="12345">
+                '<td class="sonata-ba-list-field sonata-ba-list-field-html" data-object-id="12345">
                 Creating a Template for[...]
                 </td>',
                 'html',
@@ -1401,16 +1405,11 @@ EOT
                 }
             }));
 
-        $this->assertSame(
-                $this->removeExtraWhitespace($expected),
-                $this->removeExtraWhitespace(
-                    $this->twigExtension->renderViewElement(
-                        $this->environment,
-                        $this->fieldDescription,
-                        $this->object
-                    )
-                )
-            );
+        $this->assertHTMLEquals($expected, $this->twigExtension->renderViewElement(
+            $this->environment,
+            $this->fieldDescription,
+            $this->object
+        ));
     }
 
     public function getRenderViewElementTests()
@@ -1558,7 +1557,7 @@ EOT
                     'Status1' => 'Alias1',
                     'Status2' => 'Alias2',
                     'Status3' => 'Alias3',
-                ], 'multiple' => true, 'delimiter' => ' | '],
+            ], 'multiple' => true, 'delimiter' => ' | '],
             ],
             [
                 '<th>Data</th> <td>Delete, Alias3</td>',
@@ -1637,7 +1636,7 @@ EOT
                 'url',
                 'https://example.com',
                 ['safe' => false,
-                'hide_protocol' => false, ],
+                'hide_protocol' => false,],
             ],
             [
                 '<th>Data</th> <td><a href="http://example.com">Foo</a></td>',
@@ -2039,31 +2038,29 @@ EOT
 
         $template = $this->environment->loadTemplate('SonataAdminBundle:CRUD:base_list_field.html.twig');
 
-        $this->assertSame(
-            '<td class="sonata-ba-list-field sonata-ba-list-field-" objectId="12345"> foo </td>',
-            $this->removeExtraWhitespace($this->twigExtension->output(
-                $this->fieldDescription,
-                $template,
-                $parameters,
-                $this->environment
-            ))
+        $this->assertHTMLequals(
+            '<td class="sonata-ba-list-field" data-object-id="12345"> foo </td>',
+            $this->twigExtension->output($this->fieldDescription, $template, $parameters, $this->environment)
         );
 
         $this->environment->enableDebug();
-        $this->assertSame(
-            $this->removeExtraWhitespace(<<<'EOT'
+        $output = self::normalizeWhitespace(
+            $this->twigExtension->output($this->fieldDescription, $template, $parameters, $this->environment)
+        );
+        $this->assertStringStartsWith(
+            self::normalizeWhitespace(<<<EOS
 <!-- START
     fieldName: fd_name
     template: SonataAdminBundle:CRUD:base_list_field.html.twig
     compiled template: SonataAdminBundle:CRUD:base_list_field.html.twig
 -->
-    <td class="sonata-ba-list-field sonata-ba-list-field-" objectId="12345"> foo </td>
-<!-- END - fieldName: fd_name -->
-EOT
+EOS
             ),
-            $this->removeExtraWhitespace(
-                $this->twigExtension->output($this->fieldDescription, $template, $parameters, $this->environment)
-            )
+            $output
+        );
+        $this->assertStringEndsWith(
+            '<!-- END - fieldName: fd_name -->',
+            $output
         );
     }
 

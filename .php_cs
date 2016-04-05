@@ -37,4 +37,6 @@ if (method_exists($config, 'setRules')) {
     )));
 }
 
+$config->getFinder()->exclude(array('Tests/Fixtures', 'node_modules', 'Resources'));
+
 return $config;

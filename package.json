@@ -1,0 +1,54 @@
+{
+  "name": "@sonata/admin-bundle",
+  "version": "3.0.0",
+  "description": "SonataAdminBundle - The missing Symfony Admin Generator",
+  "private": true,
+  "main": "Resources/public/main.js",
+  "scripts": {
+    "build": "webpack --mode=production --hide-modules",
+    "watch": "webpack --mode=development --watch",
+    "lint": "eslint Resources/assets/js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sonata-project/SonataAdminBundle.git"
+  },
+  "author": "Thomas Rabaix",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sonata-project/SonataAdminBundle/issues"
+  },
+  "homepage": "https://github.com/sonata-project/SonataAdminBundle#readme",
+  "contributors": [
+    {
+      "name": "Sonata Community",
+      "url": "https://github.com/sonata-project/SonataAdminBundle/contributors"
+    }
+  ],
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.6.2"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "eslint": "^6.5.1",
+    "mini-css-extract-plugin": "^0.8.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-import": "^12.0.1",
+    "postcss-inline-svg": "^4.1.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-preset-env": "^6.7.0",
+    "raw-loader": "^3.1.0",
+    "terser-webpack-plugin": "^2.0.1",
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
+  }
+}

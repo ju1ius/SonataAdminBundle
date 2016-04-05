@@ -30,6 +30,7 @@ env:
     - TARGET=test
     - UPSTREAM_URL=https://github.com/sonata-project/SonataAdminBundle.git
     - XMLLINT_INDENT="    "
+    - TRAVIS_NODE_VERSION="12"
 
 matrix:
   fast_finish: true

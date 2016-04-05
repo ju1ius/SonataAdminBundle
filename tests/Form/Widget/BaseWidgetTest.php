@@ -12,6 +12,7 @@
 namespace Sonata\AdminBundle\Tests\Form\Widget;
 
 use Sonata\CoreBundle\Test\AbstractWidgetTestCase;
+use Sonata\AdminBundle\Twig\Extension\SonataHelpersExtension;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 use Symfony\Bridge\Twig\Form\TwigRendererEngine;
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
@@ -43,7 +44,6 @@ abstract class BaseWidgetTest extends AbstractWidgetTestCase
         'block_name' => false,
         'options' => [
             'form_type' => 'vertical',
-            'use_icheck' => true,
         ],
     ];
 
@@ -57,6 +57,7 @@ abstract class BaseWidgetTest extends AbstractWidgetTestCase
         if (!$environment->hasExtension('Symfony\Bridge\Twig\Extension\TranslationExtension')) {
             $environment->addExtension(new TranslationExtension(new StubTranslator()));
         }
+        $environment->addExtension(new SonataHelpersExtension());
 
         return $environment;
     }

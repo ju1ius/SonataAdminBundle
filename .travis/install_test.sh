@@ -19,3 +19,9 @@ if [ "${COMPOSER_FLAGS}" = '--prefer-lowest' ]; then
 fi
 
 composer update --prefer-dist --no-interaction --prefer-stable ${COMPOSER_FLAGS}
+
+rm -rf ~/.nvm \
+    && git clone https://github.com/creationix/nvm.git ~/.nvm \
+    && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) \
+    && source ~/.nvm/nvm.sh \
+    && nvm install $TRAVIS_NODE_VERSION

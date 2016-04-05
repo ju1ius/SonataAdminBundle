@@ -37,31 +37,34 @@ file that was distributed with this source code.
             {% endfor %}
         {% endblock %}
 
+        {#- This must come before the javascripts block so that users can override config there. -#}
+        <script>
+            window.Sonata = {
+                debug: {{ app.debug|json_encode }},
+                config: {
+                    confirmExit: {{ sonata_admin.adminPool.getOption('confirm_exit') ? 'true' : 'false' }},
+                    useSelect2: {{ sonata_admin.adminPool.getOption('use_select2') ? 'true' : 'false' }},
+                    useStickyForms: {{ sonata_admin.adminPool.getOption('use_stickyforms') ? 'true' : 'false' }}
+                },
+                i18n: {
+                    confirmExit: '{{ 'confirm_exit'|trans({}, 'SonataAdminBundle')|e('js') }}',
+                    loadingInformation: '{{ 'loading_information'|trans({}, 'SonataAdminBundle')|e('js') }}'
+                }
+            };
+
+            // http://getbootstrap.com/getting-started/#support-ie10-width
+            if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
+                var msViewportStyle = document.createElement('style');
+                msViewportStyle.appendChild(document.createTextNode('@-ms-viewport{width:auto!important}'));
+                document.querySelector('head').appendChild(msViewportStyle);
+            }
+        </script>
+
         {% block javascripts %}
-            {% block sonata_javascript_config %}
-                <script>
-                    window.SONATA_CONFIG = {
-                        CONFIRM_EXIT: {% if sonata_admin.adminPool.getOption('confirm_exit') %}true{% else %}false{% endif %},
-                        USE_SELECT2: {% if sonata_admin.adminPool.getOption('use_select2') %}true{% else %}false{% endif %},
-                        USE_ICHECK: {% if sonata_admin.adminPool.getOption('use_icheck') %}true{% else %}false{% endif %},
-                        USE_STICKYFORMS: {% if sonata_admin.adminPool.getOption('use_stickyforms') %}true{% else %}false{% endif %}
-                    };
-                    window.SONATA_TRANSLATIONS = {
-                        CONFIRM_EXIT: '{{ 'confirm_exit'|trans({}, 'SonataAdminBundle')|escape('js') }}'
-                    };
-
-                    // http://getbootstrap.com/getting-started/#support-ie10-width
-                    if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-                        var msViewportStyle = document.createElement('style');
-                        msViewportStyle.appendChild(document.createTextNode('@-ms-viewport{width:auto!important}'));
-                        document.querySelector('head').appendChild(msViewportStyle);
-                    }
-                </script>
-            {% endblock %}
-
+            {% block sonata_javascript_config '' %}
             {% block sonata_javascript_pool %}
                 {% for javascript in sonata_admin.adminPool.getOption('javascripts', []) %}
-                    <script src="{{ asset(javascript) }}"></script>
+                <script src="{{ asset(javascript) }}"></script>
                 {% endfor %}
             {% endblock %}
 
@@ -115,7 +118,7 @@ file that was distributed with this source code.
         {% endblock %}
         </title>
     </head>
-    <body {% block body_attributes %}class="sonata-bc skin-black fixed"{% endblock %}>
+    <body {% block body_attributes %}class="sonata-bc skin-black fixed {{ sonata_body_classes() }}"{% endblock %}>
 
     <div class="wrapper">
 
@@ -362,7 +365,14 @@ file that was distributed with this source code.
         {% block bootlint %}
             {# Bootlint - https://github.com/twbs/bootlint#in-the-browser #}
             <script type="text/javascript">
-                javascript:(function(){var s=document.createElement("script");s.onload=function(){bootlint.showLintReportForCurrentDocument([], {hasProblems: false, problemFree: false});};s.src="https://maxcdn.bootstrapcdn.com/bootlint/latest/bootlint.min.js";document.body.appendChild(s)})();
+                (function(){
+                    var s = document.createElement("script");
+                    s.onload = function () {
+                        bootlint.showLintReportForCurrentDocument([], {hasProblems: false, problemFree: false});
+                    };
+                    s.src = "https://maxcdn.bootstrapcdn.com/bootlint/latest/bootlint.min.js";
+                    document.body.appendChild(s)
+                })();
             </script>
         {% endblock %}
     {% endif %}

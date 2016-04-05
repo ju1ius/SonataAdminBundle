@@ -1,0 +1,18 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "modules": false,
+      "loose": true
+    }]
+  ],
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    "@babel/plugin-proposal-object-rest-spread",
+    ["@babel/plugin-proposal-class-properties", {"loose" : true}],
+    ["@babel/plugin-transform-runtime", {
+      "useESModules": true,
+      "regenerator": false,
+      "corejs": 3
+    }]
+  ]
+}

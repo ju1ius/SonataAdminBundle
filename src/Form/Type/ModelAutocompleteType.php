@@ -89,6 +89,8 @@ class ModelAutocompleteType extends AbstractType
             'context',
             // add button
             'btn_add',
+            'btn_edit',
+            'btn_show',
             'btn_catalogue',
         ] as $passthroughOption) {
             $view->vars[$passthroughOption] = $options[$passthroughOption];
@@ -133,11 +135,6 @@ class ModelAutocompleteType extends AbstractType
 
             'to_string_callback' => null,
 
-            // add button
-            // NEXT_MAJOR: Set this value to 'link_add' to display button by default
-            'btn_add' => false,
-            'btn_catalogue' => 'SonataAdminBundle',
-
             // ajax parameters
             'url' => '',
             'route' => ['name' => 'sonata_admin_retrieve_autocomplete_items', 'parameters' => []],
@@ -157,6 +154,11 @@ class ModelAutocompleteType extends AbstractType
             'dropdown_auto_width' => false,
 
             'template' => 'SonataAdminBundle:Form/Type:sonata_type_model_autocomplete.html.twig',
+
+            'btn_catalogue' => 'SonataAdminBundle',
+            'btn_add' => 'link_add',
+            'btn_edit' => 'link_action_edit',
+            'btn_show' => 'link_action_show',
         ]);
 
         $resolver->setRequired(['property']);

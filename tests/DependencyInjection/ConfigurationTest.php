@@ -24,7 +24,6 @@ class ConfigurationTest extends TestCase
         $this->assertTrue($config['options']['html5_validate']);
         $this->assertNull($config['options']['pager_links']);
         $this->assertTrue($config['options']['confirm_exit']);
-        $this->assertTrue($config['options']['use_icheck']);
     }
 
     public function testBreadcrumbsChildRouteDefaultsToEdit()

@@ -115,6 +115,10 @@ class ModelType extends AbstractType
                 );
 
             };
+            // NEXT_MAJOR: Remove this when dropping support for SF 2.8
+            if (method_exists('Symfony\Component\Form\FormTypeInterface', 'setDefaultOptions')) {
+                $options['choices_as_values'] = true;
+            }
         } else {
             $options['choice_list'] = function (Options $options, $previousValue) use ($propertyAccessor) {
                 if ($previousValue && count($choices = $previousValue->getChoices())) {
